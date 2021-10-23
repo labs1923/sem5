@@ -1,3 +1,4 @@
+LanRouter set debug_ 0
 set ns [new Simulator]
 
 set nf [open out.nam w]
@@ -17,12 +18,8 @@ set n1 [$ns node]
 set n2 [$ns node]
 set n3 [$ns node]
 
-$ns duplex-link $n0 $n1 10Mbps 10ms DropTail
-$ns duplex-link $n1 $n2 10Mbps 10ms DropTail
-$ns duplex-link $n2 $n3 10Mbps 10ms DropTail
-
+set lan0 [$ns newLan "$n0 $n1 $n2 $n3" 0.5Mb 40ms LL Queue/DropTail MAC/Csma/Cd Channel]
 
 
 $ns at 5.00 "finish"
 $ns run
-
