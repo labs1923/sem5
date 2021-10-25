@@ -32,7 +32,6 @@ for i in range(divisor_len,crc_len+1):
        c = xor(crc[0:divisor_len],divisor)
        for i in range(divisor_len):
            crc[i] = c[i]
-           crc[i] = c[i]
        crc.pop(0)
     else :
         crc.pop(0)
