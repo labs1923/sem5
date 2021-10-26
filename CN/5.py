@@ -43,4 +43,4 @@ for i in range(len(r)):
     hc[pow(2,two_pow)-1] = even_parity(r[i],hc)
     two_pow += 1
 print("hamming code generated :- ")
-print("".join(hc)) 
+print("".join(hc[::-1])) 
