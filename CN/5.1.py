@@ -37,7 +37,7 @@ p_no = 0
 for i in range(power):
     p_no += int(p_bits[i])*pow(2,i)
 print("parity bit is :- ",p_no)
-if message[p_no] == 1:
+if message[p_no-1] == '1':
     message = message[:p_no-1]  +str(0) + message[p_no:]  
 else :
    message = message[:p_no-1]  +str(1) + message[p_no:]  
