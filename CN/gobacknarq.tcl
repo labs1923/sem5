@@ -45,6 +45,5 @@ set ftp [new Application/FTP]
 $ftp attach-agent $tcp
 $ns at 0.1 "$ftp start"
 $ns at 10.68 "$ftp stop"
-$ns at 10.8 "$ns detach-agent $n0 $tcp ; $ns detach-agent $n1 $sink"
 $ns at 11.0 "finish"
 $ns run
