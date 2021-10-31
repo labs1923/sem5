@@ -23,8 +23,8 @@ $ns duplex-link $n3 $n1 0.2Mb 200ms DropTail
 Agent/TCP set nam_tracevar_ true
 
 set tcp [new Agent/TCP]
-$tcp set windowInit_ 10
-$tcp set maxcwnd_ 10
+$tcp set windowInit_ 2
+$tcp set maxcwnd_ 2
 $ns attach-agent $n0 $tcp
 
 set sink [new Agent/TCPSink]
