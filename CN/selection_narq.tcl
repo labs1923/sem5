@@ -1,15 +1,15 @@
 set ns [new Simulator]
 
-set nf [open Go-Back-N.nam w]
+set nf [open out.nam w]
 $ns namtrace-all $nf
-set f [open Go-Back-N.tr w]
+set f [open out.tr w]
 $ns trace-all $f
 
 proc finish {} {
         global ns
         $ns flush-trace
        puts "running nam..."
-       exec nam Go-Back-N.nam &
+       exec nam out.nam &
         exit 0
 }
 
