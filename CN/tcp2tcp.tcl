@@ -1,4 +1,3 @@
-
 set ns [new Simulator] 
 $ns color 1 Blue 
 $ns color 2 Red 
@@ -9,7 +8,6 @@ $ns namtrace-all $file2
 proc finish {} { 
 global ns  file2 
 $ns flush-trace 
-
 close $file2 
 exec nam out.nam & 
 exit 0 
@@ -51,4 +49,3 @@ $ns at 12.0 "$ftp1 stop"
 $ns at 12.5 "$ftp stop" 
 $ns at 13.0 "finish" 
 $ns run
-
