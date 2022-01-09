@@ -1,5 +1,18 @@
 set ns [new Simulator]
 
+set nf [open Go-Back-N.nam w]
+$ns namtrace-all $nf
+set f [open Go-Back-N.tr w]
+$ns trace-all $f
+
+proc finish {} {
+        global ns
+        $ns flush-trace
+       puts "running nam..."
+       exec nam Go-Back-N.nam &
+        exit 0
+}
+
 set n0 [$ns node]
 set n1 [$ns node]
 set n2 [$ns node]
@@ -10,15 +23,9 @@ $ns at 0.0 "$n1 label Receiver"
 $n0 color red
 $n1 color blue
 
-set nf [open Go-Back-N.nam w]
-$ns namtrace-all $nf
-set f [open Go-Back-N.tr w]
-$ns trace-all $f
-
 $ns duplex-link $n0 $n2 0.2Mb 200ms DropTail
 $ns duplex-link $n2 $n3 0.2Mb 200ms DropTail
 $ns duplex-link $n3 $n1 0.2Mb 200ms DropTail
-
 
 Agent/TCP set nam_tracevar_ true
 
@@ -40,13 +47,5 @@ $ns at 0.1 "$ftp start"
 $ns at 10.68 "$ftp stop"
 $ns at 10.8 "$ns detach-agent $n0 $tcp ; $ns detach-agent $n1 $sink"
 $ns at 11.0 "finish"
-
-proc finish {} {
-        global ns
-        $ns flush-trace
-       puts "running nam..."
-       exec nam Go-Back-N.nam &
-        exit 0
-}
 
 $ns run
