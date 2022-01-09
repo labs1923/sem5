@@ -1,13 +1,12 @@
-
 set ns [new Simulator] 
 $ns color 1 Blue 
 $ns color 2 Red 
-#Open the Trace files 
+
 set file1 [open out.tr w] 
 $ns trace-all $file1 
 set file2 [open udpout1.nam w] 
 $ns namtrace-all $file2 
-#Define a 'finish' procedure 
+
 proc finish {} { 
 global ns file1 file2 
 $ns flush-trace 
@@ -17,12 +16,12 @@ puts "running nam"
 exec nam udpout1.nam & 
 exit 0 
 } 
+
 set n0 [$ns node] 
 set n1 [$ns node] 
 set n2 [$ns node] 
 set n3 [$ns node] 
 set n4 [$ns node] 
-
 
 $n1 color red 
 $n1 shape box
@@ -48,20 +47,15 @@ $ns attach-agent $n0 $null1
 $ns connect $udp1 $null1
 
 $udp set fid_ 1 
-
 $udp1 set fid_ 2 
 
-#Setup a FTP over TCP connection 
 set cbr [new Application/Traffic/CBR] 
 $cbr attach-agent $udp 
-#$cbr set window_ 10 
 $cbr set type_ CBR 
 
 set cbr1 [new Application/Traffic/CBR] 
 $cbr1 attach-agent $udp1 
 $cbr1 set type_ CBR 
-#$cbr1 set window_ 2 
-
 
 $ns at 0.1 "$cbr start" 
 $ns at 0.1 "$cbr1 start" 
