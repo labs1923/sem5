@@ -1,69 +1,50 @@
-set val(chan)           Channel/WirelessChannel    ;
-set val(prop)           Propagation/TwoRayGround   ;
-set val(netif)          Phy/WirelessPhy            ;
-set val(mac)            Mac/802_11                 ;
-set val(ifq)            Queue/DropTail/PriQueue    ;
-set val(ll)             LL                         ;
-set val(ant)            Antenna/OmniAntenna        ;
-set val(ifqlen)         50                         ;
-set val(nn)             2                          ;
-set val(rp)             DSDV                       ;
-set ns_		[new Simulator]
-set tracefd     [open simple.tr w]
-set namtrace    [open simple-out.nam w]
-$ns_ trace-all $tracefd
-$ns_ namtrace-all-wireless $namtrace 500 500
-set topo       [new Topography]
+set ns [new Simulator]
+set tracefile [open wireless.tr w]
+$ns trace-all $tracefile
+set namfile [open wireless.nam w]
+$ns namtrace-all-wireless $namfile 500 500
+set topo [new Topography]
 $topo load_flatgrid 500 500
-create-god $val(nn)
-        $ns_ node-config -adhocRouting $val(rp) \
-			 -llType $val(ll) \
-			 -macType $val(mac) \
-			 -ifqType $val(ifq) \
-			 -ifqLen $val(ifqlen) \
-			 -antType $val(ant) \
-			 -propType $val(prop) \
-			 -phyType $val(netif) \
-			 -channelType $val(chan) \
-			 -topoInstance $topo \
-			 -agentTrace ON \
-			 -routerTrace ON \
-			 -macTrace OFF \
-			 -movementTrace OFF				 
-	for {set i 0} {$i < $val(nn) } {incr i} {
-		set node_($i) [$ns_ node]
-		$node_($i) random-motion 0;
-	}
-$node_(0) set X_ 5.0
-$node_(0) set Y_ 2.0
-$node_(0) set Z_ 0.0
-$node_(1) set X_ 390.0
-$node_(1) set Y_ 385.0
-$node_(1) set Z_ 0.0
-$ns_ at 50.0 "$node_(1) setdest 25.0 20.0 15.0"
-$ns_ at 10.0 "$node_(0) setdest 20.0 18.0 1.0"
-$ns_ at 100.0 "$node_(1) setdest 490.0 480.0 15.0" 
+create-god 4
+$ns node-config -adhocRouting AODV -llType LL \
+-macType Mac/802_11 -ifqType Queue/DropTail/PriQueue \
+-ifqLen 50 -antType Antenna/OmniAntenna \
+-propType Propagation/TwoRayGround -phyType Phy/WirelessPhy \
+-channel [new Channel/WirelessChannel] -topoInstance $topo \
+-agentTrace ON -routerTrace OFF \
+-macTrace ON \
+-movementTrace OFF
+set n0 [$ns node]
+set n1 [$ns node]
+
+$ns initial_node_pos $n0 50
+$ns initial_node_pos $n1 50
+
+$n0 set X_ 100.0
+$n0 set Y_ 100.0
+$n0 set Z_ 0.0
+$n1 set X_ 300.0
+$n1 set Y_ 100.0
+$n1 set Z_ 0.0
+
+$ns at 1.0 "$n0 setdest 300.0 100.0 25.0"
+$ns at 1.0 "$n1 setdest 300.0 300.0 25.0"
+
 set tcp [new Agent/TCP]
-$tcp set class_ 2
 set sink [new Agent/TCPSink]
-$ns_ attach-agent $node_(0) $tcp
-$ns_ attach-agent $node_(1) $sink
-$ns_ connect $tcp $sink
+$ns attach-agent $n0 $tcp
+$ns attach-agent $n1 $sink
+$ns connect $tcp $sink
 set ftp [new Application/FTP]
 $ftp attach-agent $tcp
-$ns_ at 10.0 "$ftp start" 
-for {set i 0} {$i < $val(nn) } {incr i} {
-    $ns_ at 150.0 "$node_($i) reset";
+$ns at 1.0 "$ftp start"
+$ns at 10.0 "finish"
+proc finish {} {
+global ns tracefile namfile
+$ns flush-trace
+close $tracefile
+close $namfile
+exec nam wireless.nam &
+exit 0
 }
-$ns_ at 150.0 "stop"
-$ns_ at 150.01 "puts \"NS EXITING...\" ; $ns_ halt"
-proc stop {} {
-    global ns_ tracefd
-    $ns_ flush-trace
-    close $tracefd
-    puts "running nam..."
-    exec nam simple-out.nam &
-    exit 0
-}
-puts "Starting Simulation..."
-$ns_ run
+$ns run
