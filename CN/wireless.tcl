@@ -1,11 +1,24 @@
 set ns [new Simulator]
+
 set tracefile [open wireless.tr w]
 $ns trace-all $tracefile
+
 set namfile [open wireless.nam w]
 $ns namtrace-all-wireless $namfile 500 500
+
+proc finish {} {
+global ns tracefile namfile
+$ns flush-trace
+close $tracefile
+close $namfile
+exec nam wireless.nam &
+exit 0
+}
+
 set topo [new Topography]
 $topo load_flatgrid 500 500
 create-god 4
+
 $ns node-config -adhocRouting AODV -llType LL \
 -macType Mac/802_11 -ifqType Queue/DropTail/PriQueue \
 -ifqLen 50 -antType Antenna/OmniAntenna \
@@ -14,6 +27,7 @@ $ns node-config -adhocRouting AODV -llType LL \
 -agentTrace ON -routerTrace OFF \
 -macTrace ON \
 -movementTrace OFF
+
 set n0 [$ns node]
 set n1 [$ns node]
 
@@ -39,12 +53,4 @@ set ftp [new Application/FTP]
 $ftp attach-agent $tcp
 $ns at 1.0 "$ftp start"
 $ns at 10.0 "finish"
-proc finish {} {
-global ns tracefile namfile
-$ns flush-trace
-close $tracefile
-close $namfile
-exec nam wireless.nam &
-exit 0
-}
 $ns run
